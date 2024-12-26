@@ -1,5 +1,7 @@
 import torch
 from pathlib import Path
+from PIL import Image  # Import the Image module from Pillow
+
 
 # Load YOLOv5 model
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
@@ -14,8 +16,11 @@ img_dir = Path('data/images/')
 # Perform inference on all images in the folder
 for img_path in img_dir.glob('*.jpg'):
     results = model(str(img_path))  # Perform detection
-    for img_result in results.imgs:  # Loop through processed images
+    # print(dir(results))
+    for img_result in results.ims:  # Loop through processed images
         save_path = output_dir / img_path.name
         results.render()  # Render the bounding boxes on the image
-        results.imgs[0].save(save_path)  # Save processed image to a single folder
+        image = Image.fromarray(results.ims[0])
+        image.save(save_path)
         print(f"Processed: {img_path.name}")
+
